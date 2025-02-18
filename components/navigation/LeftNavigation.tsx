@@ -30,7 +30,7 @@ export const FINANCE_ITEMS = [
 ];
 
 export const LIST_SUBITEMS = [
-  { href: "/dashboard/expenses-list", label: "Lista Spese", icon: <ListCheck className="w-5 h-5" /> },
+  { href: "/dashboard/list", label: "Lista Spese", icon: <ListCheck className="w-5 h-5" /> },
   { href: "/dashboard/products", label: "Prodotti", icon: <Coffee className="w-5 h-5" /> },
 ];
 
