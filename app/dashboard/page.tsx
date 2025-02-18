@@ -113,7 +113,7 @@ export default function DashboardPage() {
     });
 
     // Calculăm datele pentru zile ale săptămânii
-    const days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
+    const days = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
     const weekdayData = days.map(day => ({
       name: day,
       amount: currentMonthIncomes
@@ -181,7 +181,7 @@ export default function DashboardPage() {
   const dailyGoal = data.settings?.dailyGoal || 600;
 
   return (
-    <div className="p-4 space-y-4">
+    <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Dashboard</h1>
         <MonthSelector 
@@ -323,11 +323,7 @@ export default function DashboardPage() {
                     axisLine={{ stroke: '#E5E7EB' }}
                   />
                   <YAxis 
-                    stroke="#6B7280"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={{ stroke: '#E5E7EB' }}
-                    tickFormatter={(value) => `€${value}`}
+                    hide={true}
                   />
                   <Tooltip
                     contentStyle={{ 

@@ -32,9 +32,12 @@ export default function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full border rounded-md p-2 lg:p-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center justify-between px-4">
-        <div className="flex items-center gap-4">
+    <header className="sticky top-0 z-50 w-full border rounded-md lg:px-2 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-14 items-center justify-between px-2">
+        <div className="text-sm font-semibold px-2">
+          Quantic
+        </div>
+        <div className="flex items-center gap-4 w-full">
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="lg:hidden">
@@ -161,9 +164,13 @@ export default function Header() {
             </SheetContent>
           </Sheet>
 
-          <div className="flex items-center gap-4">
-            <AddTransactionModal />
-            <Notification />
+          <div className="flex w-full items-center justify-between gap-4 ml-auto">
+            <div className="lg:px-4">
+              <AddTransactionModal />
+            </div>
+            <div className="px-2 cursor-pointer">
+              <Notification />
+            </div>
           </div>
         </div>
       </div>

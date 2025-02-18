@@ -204,7 +204,7 @@ export default function ExpensePage() {
   }, {} as Record<string, number>);
 
   return (
-    <div className="p-4 space-y-4">
+    <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Spese</h1>
         <MonthSelector 
@@ -262,7 +262,7 @@ export default function ExpensePage() {
               <p className="text-center text-muted-foreground">Nessuna spesa per questo mese</p>
             ) : (
               expenses.map((expense, index) => (
-                <div key={index} className="flex justify-between items-center p-2 border rounded group">
+                <div key={index} className="flex justify-between items-center py-2 px-4 border rounded group">
                   <div>
                     <p className="text-sm text-muted-foreground">
                       {new Date(expense.date).toLocaleDateString('it-IT')}
@@ -276,7 +276,7 @@ export default function ExpensePage() {
                     <div className="text-lg font-semibold text-red-600">
                       -€{expense.amount.toFixed(2)}
                     </div>
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+                    <div className="hidden group-hover:flex transition-opacity gap-2 px-4">
                       <button
                         onClick={() => setEditingExpense(expense)}
                         className="p-2 hover:bg-gray-100 rounded-full"

@@ -178,7 +178,7 @@ export default function IncomePage() {
   };
 
   return (
-    <div className="p-4 space-y-4">
+    <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Incassi</h1>
         <MonthSelector 
@@ -234,7 +234,7 @@ export default function IncomePage() {
               <p className="text-center text-muted-foreground">Nessun incasso per questo mese</p>
             ) : (
               incomes.map((income, index) => (
-                <div key={index} className="flex justify-between items-center p-2 border rounded group">
+                <div key={index} className="flex justify-between items-center py-2 px-4 border rounded group">
                   <div>
                     <p className="text-sm text-muted-foreground">
                       {new Date(income.date).toLocaleDateString('it-IT')}
@@ -248,7 +248,7 @@ export default function IncomePage() {
                     <div className="text-lg font-semibold">
                       €{income.total}
                     </div>
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+                    <div className="hidden group-hover:flex transition-opacity gap-2 px-4">
                       <button
                         onClick={() => setEditingIncome(income)}
                         className="p-2 hover:bg-gray-100 rounded-full"
