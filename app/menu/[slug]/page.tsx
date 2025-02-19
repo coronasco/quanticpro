@@ -84,4 +84,4 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: menuData ? `${menuData.title} | QuanticPro` : 'Menu | QuanticPro',
     description: 'View our menu and prices',
   };
-} 
+}

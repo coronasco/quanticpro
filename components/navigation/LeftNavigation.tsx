@@ -14,6 +14,7 @@ import {
   ChevronDown,
   ChevronUp,
   QrCode,
+  Receipt,
 } from "lucide-react";
 import UserBadge from "@/components/UserBadge";
 import { cn } from "@/lib/utils";
@@ -40,6 +41,7 @@ export default function LeftNavigation({ mobile, onClose }: Props) {
   const NAV_ITEMS = [
     { href: "/dashboard", label: "Dashboard", icon: <LayoutDashboard className="w-5 h-5" /> },
     { href: "/dashboard/menugenerator", label: "Menu Generator", icon: <QrCode className="w-5 h-5" /> },
+    { href: "/dashboard/bills", label: "Promemoria", icon: <Receipt className="w-5 h-5" /> },
   ];
 
   const FINANCE_ITEMS = [
