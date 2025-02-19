@@ -77,7 +77,7 @@ export default async function MenuPage({ params }: PageProps) {
   return <TemplateComponent title={menuData.title} categories={menuData.categories} />;
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const menuData = await getMenuData(params.slug);
   
   return {
