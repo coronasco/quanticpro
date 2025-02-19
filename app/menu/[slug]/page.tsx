@@ -5,9 +5,10 @@ import { ClassicTemplate } from "@/components/menu-templates/ClassicTemplate";
 import { ModernTemplate } from "@/components/menu-templates/ModernTemplate";
 import { VintageTemplate } from "@/components/menu-templates/VintageTemplate";
 import { FuturisticTemplate } from "@/components/menu-templates/FuturisticTemplate";
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
 
-interface MenuItem {
+// Definim tipurile
+type MenuItem = {
   id: string;
   name: string;
   description?: string;
@@ -15,28 +16,25 @@ interface MenuItem {
   category: string;
 }
 
-interface Category {
+type Category = {
   id: string;
   name: string;
   icon?: string;
   items: MenuItem[];
 }
 
-type Template = "classic" | "modern" | "vintage" | "futuristic";
-
-interface MenuData {
+type MenuData = {
   title: string;
-  template: Template;
+  template: string;
   categories: Category[];
   userId: string;
 }
 
-interface SavedMenuItem {
-  slug: string;
-  title: string;
-  template: Template;
+type PageProps = {
+  params: { slug: string };
 }
 
+// Funcția pentru a obține datele meniului
 async function getMenuData(slug: string): Promise<MenuData | null> {
   try {
     const usersRef = collection(db, "users");
@@ -45,7 +43,7 @@ async function getMenuData(slug: string): Promise<MenuData | null> {
     for (const doc of snapshot.docs) {
       const data = doc.data();
       if (data.savedMenus) {
-        const menu = data.savedMenus.find((m: SavedMenuItem) => m.slug === slug);
+        const menu = data.savedMenus.find((m: { slug: string }) => m.slug === slug);
         if (menu) {
           return {
             title: menu.title,
@@ -63,28 +61,28 @@ async function getMenuData(slug: string): Promise<MenuData | null> {
   }
 }
 
-interface PageParams {
-  params: { slug: string };
-}
-
-export default async function Page({ params }: PageParams) {
+// Componenta principală
+export default async function MenuPage({ params }: PageProps) {
   const menuData = await getMenuData(params.slug);
 
   if (!menuData) {
     notFound();
   }
 
-  const TemplateComponent = {
+  const templates = {
     classic: ClassicTemplate,
     modern: ModernTemplate,
     vintage: VintageTemplate,
     futuristic: FuturisticTemplate,
-  }[menuData.template] || ClassicTemplate;
+  } as const;
+
+  const TemplateComponent = templates[menuData.template as keyof typeof templates] || ClassicTemplate;
 
   return <TemplateComponent title={menuData.title} categories={menuData.categories} />;
 }
 
-export async function generateMetadata({ params }: PageParams): Promise<Metadata> {
+// Metadata
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const menuData = await getMenuData(params.slug);
   
   return {
