@@ -5,14 +5,11 @@ import { ClassicTemplate } from "@/components/menu-templates/ClassicTemplate";
 import { ModernTemplate } from "@/components/menu-templates/ModernTemplate";
 import { VintageTemplate } from "@/components/menu-templates/VintageTemplate";
 import { FuturisticTemplate } from "@/components/menu-templates/FuturisticTemplate";
-import { Metadata } from 'next';
 
-// Adăugăm tipurile pentru Next.js pages
-type Props = {
-  params: {
-    slug: string
-  }
-  searchParams: { [key: string]: string | string[] | undefined }
+interface SavedMenu {
+  slug: string;
+  title: string;
+  template: string;
 }
 
 interface MenuItem {
@@ -30,9 +27,11 @@ interface Category {
   items: MenuItem[];
 }
 
+type Template = "classic" | "modern" | "vintage" | "futuristic";
+
 interface MenuData {
   title: string;
-  template: string;
+  template: Template;
   categories: Category[];
   userId: string;
 }
@@ -45,18 +44,17 @@ async function getMenuData(slug: string): Promise<MenuData | null> {
     for (const doc of snapshot.docs) {
       const data = doc.data();
       if (data.savedMenus) {
-        const menu = data.savedMenus.find((m: { slug: string }) => m.slug === slug);
+        const menu = data.savedMenus.find((m: SavedMenu) => m.slug === slug);
         if (menu) {
           return {
             title: menu.title,
-            template: menu.template,
+            template: menu.template as Template,
             categories: data.menuCategories || [],
             userId: doc.id
           };
         }
       }
     }
-    
     return null;
   } catch (error) {
     console.error("Error fetching menu:", error);
@@ -64,7 +62,11 @@ async function getMenuData(slug: string): Promise<MenuData | null> {
   }
 }
 
-export default async function MenuPage({ params }: Props) {
+export default async function page({ 
+  params 
+}: { 
+  params: { slug: string } 
+}) {
   const menuData = await getMenuData(params.slug);
 
   if (!menuData) {
@@ -81,7 +83,11 @@ export default async function MenuPage({ params }: Props) {
   return <TemplateComponent title={menuData.title} categories={menuData.categories} />;
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ 
+  params 
+}: { 
+  params: { slug: string } 
+}) {
   const menuData = await getMenuData(params.slug);
   
   return {
