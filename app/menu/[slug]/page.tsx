@@ -7,6 +7,14 @@ import { VintageTemplate } from "@/components/menu-templates/VintageTemplate";
 import { FuturisticTemplate } from "@/components/menu-templates/FuturisticTemplate";
 import { Metadata } from 'next';
 
+// Adăugăm tipurile pentru Next.js pages
+type Props = {
+  params: {
+    slug: string
+  }
+  searchParams: { [key: string]: string | string[] | undefined }
+}
+
 interface MenuItem {
   id: string;
   name: string;
@@ -56,11 +64,7 @@ async function getMenuData(slug: string): Promise<MenuData | null> {
   }
 }
 
-export default async function MenuPage({
-  params,
-}: {
-  params: { slug: string }
-}) {
+export default async function MenuPage({ params }: Props) {
   const menuData = await getMenuData(params.slug);
 
   if (!menuData) {
@@ -77,11 +81,7 @@ export default async function MenuPage({
   return <TemplateComponent title={menuData.title} categories={menuData.categories} />;
 }
 
-export async function generateMetadata({ 
-  params 
-}: { 
-  params: { slug: string } 
-}): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const menuData = await getMenuData(params.slug);
   
   return {
