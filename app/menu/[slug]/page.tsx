@@ -29,11 +29,10 @@ interface MenuData {
   userId: string;
 }
 
-interface MenuPageProps {
-  params: {
-    slug: string;
-  };
-}
+type MenuPageProps = {
+  params: { slug: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
+};
 
 interface SavedMenu {
   slug: string;
@@ -85,7 +84,11 @@ export default async function MenuPage({ params }: MenuPageProps) {
   return <TemplateComponent title={menuData.title} categories={menuData.categories} />;
 }
 
-export const metadata: Metadata = {
-  title: 'Menu | QuanticPro',
-  description: 'View our menu and prices',
+export const generateMetadata = async ({ params }: MenuPageProps): Promise<Metadata> => {
+  const menuData = await getMenuData(params.slug);
+  
+  return {
+    title: menuData ? `${menuData.title} | QuanticPro` : 'Menu | QuanticPro',
+    description: 'View our menu and prices',
+  };
 }; 
