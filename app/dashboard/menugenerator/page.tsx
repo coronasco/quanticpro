@@ -549,22 +549,30 @@ export default function MenuGeneratorPage() {
   if (loading) return <Loading />;
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-12 p-4 md:p-0">
       <div className="max-w-5xl mx-auto space-y-8">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4 w-full sm:w-auto">
             <Input
               value={menuTitle}
               onChange={(e) => setMenuTitle(e.target.value)}
-              className="text-2xl font-semibold tracking-tight w-auto min-w-[300px]"
+              className="text-2xl font-semibold tracking-tight w-full sm:w-auto min-w-[300px]"
             />
           </div>
-          <div className="flex items-center gap-4">
-            <Button onClick={() => setShowQRSheet(true)}>
+          <div className="flex items-center gap-4 w-full sm:w-auto">
+            <Button 
+              onClick={() => setShowQRSheet(true)}
+              className="w-full sm:w-auto"
+            >
               <QrCode className="mr-2 h-4 w-4" />
               Genera QR Code
             </Button>
-            <Button onClick={saveMenu}>Salva Menu</Button>
+            <Button 
+              onClick={saveMenu}
+              className="w-full sm:w-auto"
+            >
+              Salva Menu
+            </Button>
           </div>
         </div>
 
@@ -576,7 +584,7 @@ export default function MenuGeneratorPage() {
           </TabsList>
 
           <TabsContent value="design" className="space-y-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
               {TEMPLATES.map((template) => (
                 <div
                   key={template.id}
@@ -600,9 +608,12 @@ export default function MenuGeneratorPage() {
           </TabsContent>
 
           <TabsContent value="content" className="space-y-4">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <h2 className="text-lg font-semibold">Categorie</h2>
-              <Button onClick={() => setIsAddingCategory(true)}>
+              <Button 
+                onClick={() => setIsAddingCategory(true)}
+                className="w-full sm:w-auto"
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Nuova Categoria
               </Button>
@@ -615,11 +626,11 @@ export default function MenuGeneratorPage() {
                     <div
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className="bg-card rounded-lg border p-4 space-y-4"
+                      className="bg-card rounded-lg border p-4 space-y-4 mb-4"
                     >
-                      <div className="flex items-center justify-between">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <h3 className="font-medium">{category.name}</h3>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
                           <Button
                             variant="ghost"
                             size="sm"
@@ -627,6 +638,7 @@ export default function MenuGeneratorPage() {
                               setSelectedCategory(category.id);
                               setIsAddingProduct(true);
                             }}
+                            className="w-full sm:w-auto"
                           >
                             <Plus className="h-4 w-4 mr-2" />
                             Aggiungi Prodotto
@@ -697,7 +709,7 @@ export default function MenuGeneratorPage() {
           </TabsContent>
 
           <TabsContent value="preview" className="space-y-4 overflow-hidden">
-            <div className="bg-white rounded-lg border shadow-lg p-8 overflow-hidden">
+            <div className="bg-white rounded-lg border shadow-lg p-4 sm:p-8 overflow-hidden">
               <div className="w-full overflow-hidden">
                 <PreviewTemplate 
                   template={selectedTemplate}

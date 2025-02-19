@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { updatePassword, updateProfile } from "firebase/auth";
-import { db } from "@/lib/firebase";
+import { updatePassword, updateProfile, User } from "firebase/auth";
+import { db, auth } from "@/lib/firebase";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "@/hooks/use-toast";
 import Loading from "@/components/Loading";
+import { Crown } from "lucide-react";
 
 interface UserSettings {
   displayName: string;
@@ -22,9 +23,13 @@ interface UserSettings {
 }
 
 export default function SettingsPage() {
-  const { user } = useAuth();
+  const { user: isPremium } = useAuth();
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
+
+  // Obținem referința User completă din Firebase Auth
+  const user = auth.currentUser as User;
+
   const [settings, setSettings] = useState<UserSettings>({
     displayName: "",
     dailyGoal: 600,
@@ -162,6 +167,36 @@ export default function SettingsPage() {
     }
   };
 
+  const handleCancelSubscription = async () => {
+    try {
+      const response = await fetch("/api/cancel-subscription", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: user?.uid,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to cancel subscription");
+      }
+
+      toast({
+        title: "Abbonamento cancellato",
+        description: "Il tuo abbonamento è stato cancellato con successo",
+      });
+    } catch (error) {
+      console.error("Error canceling subscription:", error);
+      toast({
+        title: "Errore",
+        description: "Si è verificato un errore durante la cancellazione",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (!mounted) return null;
   if (!user) return null;
   if (loading) return <Loading />;
@@ -274,6 +309,22 @@ export default function SettingsPage() {
           <Button onClick={handleUpdateSettings}>Salva Preferenze</Button>
         </CardContent>
       </Card>
+
+      {isPremium && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Crown className="h-5 w-5 text-yellow-500" />
+            <h2 className="text-xl font-semibold">Abbonamento Premium</h2>
+          </div>
+
+          <Button 
+            variant="destructive"
+            onClick={handleCancelSubscription}
+          >
+            Cancella Abbonamento
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

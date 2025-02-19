@@ -1,17 +1,21 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { loginWithGoogle, loginWithEmail, registerWithEmail } from "@/lib/firebase";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
   const { user, logout } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isRegister, setIsRegister] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl');
 
   const handleGoogleLogin = async () => {
     await loginWithGoogle();
@@ -24,6 +28,12 @@ export default function LoginPage() {
       await loginWithEmail(email, password);
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      router.push(callbackUrl || '/dashboard');
+    }
+  }, [user, router, callbackUrl]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50">

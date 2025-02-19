@@ -8,6 +8,8 @@ import { MonthSelector } from "@/components/MonthSelector";
 import Loading from "@/components/Loading";
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
 import { ArrowUpRight, ArrowDownRight, Target, TrendingUp } from "lucide-react";
+import { useSearchParams } from 'next/navigation';
+import { toast } from "@/hooks/use-toast";
 
 interface Income {
   cash: number;
@@ -61,7 +63,7 @@ const PIE_COLORS = [
 ];
 
 export default function DashboardPage() {
-  const { user } = useAuth();
+  const { user, isPremium } = useAuth();
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
   const [data, setData] = useState<DashboardData | null>(null);
@@ -69,6 +71,7 @@ export default function DashboardPage() {
   const [selectedMonth, setSelectedMonth] = useState(() => 
     String(new Date().getMonth() + 1).padStart(2, '0')
   );
+  const searchParams = useSearchParams();
 
   const dashboardData = useMemo(() => {
     if (!data) return {
@@ -173,6 +176,23 @@ export default function DashboardPage() {
 
     fetchData();
   }, [user, mounted, selectedYear, selectedMonth]);
+
+  useEffect(() => {
+    if (searchParams.get('success') === 'true' && !isPremium) {
+      toast({
+        title: "Pagamento in elaborazione",
+        description: "Il tuo pagamento è in fase di elaborazione",
+      });
+    }
+    
+    if (searchParams.get('canceled') === 'true') {
+      toast({
+        title: "Pagamento annullato",
+        description: "Il pagamento è stato annullato",
+        variant: "destructive"
+      });
+    }
+  }, [searchParams, isPremium]);
 
   if (!mounted) return null;
   if (!user) return null;

@@ -122,15 +122,21 @@ export default function BillsPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Promemoria</h1>
-        <div className="flex gap-2">
-          <Button onClick={() => setShowAddGroup(true)}>
+    <div className="space-y-6 p-4 md:p-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Promemoria</h1>
+        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          <Button 
+            onClick={() => setShowAddGroup(true)}
+            className="w-full sm:w-auto bg-white border border-gray-300"
+          >
             <Plus className="mr-2 h-4 w-4" />
             Nuovo Gruppo
           </Button>
-          <Button onClick={() => setShowAddBill(true)}>
+          <Button 
+            onClick={() => setShowAddBill(true)}
+            className="w-full sm:w-auto bg-white border border-gray-300"
+          >
             <Plus className="mr-2 h-4 w-4" />
             Nuova Fattura
           </Button>
@@ -139,8 +145,8 @@ export default function BillsPage() {
 
       <div className="grid gap-6">
         {groups.map(group => (
-          <Card key={group.id} className="p-6">
-            <div className="flex items-center justify-between mb-4">
+          <Card key={group.id} className="p-4 md:p-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-2">
               <h2 className="text-xl font-semibold">{group.name}</h2>
               {group.description && (
                 <p className="text-sm text-muted-foreground">{group.description}</p>
@@ -161,7 +167,7 @@ export default function BillsPage() {
           </Card>
         ))}
 
-        <Card className="p-6">
+        <Card className="p-4 md:p-6">
           <h2 className="text-xl font-semibold mb-4">Altre Fatture</h2>
           <div className="space-y-4">
             {bills
@@ -199,8 +205,8 @@ function BillItem({ bill, onTogglePaid }: { bill: Bill; onTogglePaid: (id: strin
   const isOverdue = isBefore(dueDate, new Date()) && !bill.paid;
 
   return (
-    <div className="flex items-center justify-between p-4 border rounded-lg">
-      <div className="flex items-center gap-4">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border rounded-lg gap-4">
+      <div className="flex items-center gap-4 w-full sm:w-auto">
         <Checkbox
           checked={bill.paid}
           onCheckedChange={() => onTogglePaid(bill.id)}
@@ -212,7 +218,7 @@ function BillItem({ bill, onTogglePaid }: { bill: Bill; onTogglePaid: (id: strin
           </div>
         </div>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
         <div className="font-medium">€{bill.amount.toFixed(2)}</div>
         <Badge variant={bill.paid ? "secondary" : isOverdue ? "destructive" : "default"}>
           {bill.paid ? "Pagata" : isOverdue ? "Scaduta" : "Da pagare"}

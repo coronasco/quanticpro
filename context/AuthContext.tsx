@@ -1,95 +1,89 @@
-"use client";
-import { createContext, useContext, useEffect, useState, useRef } from "react";
+'use client'
+
+import { createContext, useContext, useEffect, useState } from "react";
+import { browserLocalPersistence, onAuthStateChanged, setPersistence, signOut, User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
-import { onAuthStateChanged, User } from "firebase/auth";
+import { useToast } from "@/hooks/use-toast";
+import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { doc, onSnapshot, DocumentSnapshot } from "firebase/firestore";
-import { useRouter } from "next/navigation";
 
-export interface AuthContextType {
-  user: User | null;
-  loading: boolean;
-  logout: () => Promise<void>;
+// Typescript interface for the authenticated user structure
+interface AuthUser {
+    uid: string;
+    email: string | null;
 }
 
-// 📌 Definim contextul cu valori implicite
+// Context type definition for authentication management
+interface AuthContextType {
+    user: AuthUser | null;
+    loading: boolean;
+    logout: () => Promise<void>;
+    isPremium: boolean;
+}
+
+// Create authentication context with default values
 const AuthContext = createContext<AuthContextType>({
-  user: null,
-  loading: true,
-  logout: async () => {},
-});
+    user: null,
+    loading: true,
+    logout: async () => {},
+    isPremium: false
+})
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [mounted, setMounted] = useState(false);
-  const router = useRouter();
-  const unsubscribeFirestoreRef = useRef<(() => void) | undefined>(undefined);
+// Authentication Provider component that manages user authentication state
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+    const [ user, setUser ] = useState<AuthUser | null>(null)
+    const [ loading, setLoading ] = useState(true) // To avoid premature redirection
+    const [ isPremium, setIsPremium ] = useState(false)
+    const { toast } = useToast()
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+    useEffect(() => {
+        // 🔹 Set persistence to 'local' so the user stays logged in
+        setPersistence(auth, browserLocalPersistence)
+            .then(() => {
+                // 🔹 Listen for authentication state changes
+                const unsubscribe = onAuthStateChanged(auth, async (currentUser: User | null) => {
+                    if(currentUser) {
+                        setUser({
+                            uid: currentUser.uid,
+                            email: currentUser.email
+                        });
 
-  useEffect(() => {
-    if (!mounted) return;
+                        // Check premium status
+                        const userRef = doc(db, "users", currentUser.uid);
+                        const userSnap = await getDoc(userRef);
+                        if (userSnap.exists()) {
+                            setIsPremium(userSnap.data().isPremium || false);
+                        }
+                    } else {
+                        setUser(null);
+                        setIsPremium(false);
+                    }
+                    setLoading(false);
+                });
 
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
+                return () => unsubscribe();
+            })
+            .catch((error) => {
+                console.error("Error setting auth persistence:", error);
+            });
+    }, [])
 
-      if (user) {
-        // Doar dacă userul este autentificat, setăm listener-ul pentru Firestore
-        unsubscribeFirestoreRef.current = onSnapshot(
-          doc(db, "users", user.uid),
-          (snapshot: DocumentSnapshot) => {
-            if (snapshot.exists()) {
-              // Aici putem procesa datele dacă este necesar
-              console.log("User data updated:", snapshot.data());
-            }
-          },
-          (error) => {
-            console.error("Firestore Error:", error);
-          }
-        );
-      } else {
-        // Dacă userul nu este autentificat, ne asigurăm că dezabonăm listener-ul
-        if (unsubscribeFirestoreRef.current) {
-          unsubscribeFirestoreRef.current();
+    const logout = async () => {
+        try {
+            setLoading(true)
+            await signOut(auth)
+            setUser(null)
+            setIsPremium(false)
+            toast({ title: "Success", description: "Disconnessione riuscita" });
+        } catch (error) {
+            toast({ title: 'Errore', description: 'Non ho potuto effetuare il logout' })
+            console.error(error)
         }
-        router.push("/auth");
-      }
-    });
-
-    return () => {
-      unsubscribe();
-      if (unsubscribeFirestoreRef.current) {
-        unsubscribeFirestoreRef.current();
-      }
-    };
-  }, [mounted, router]);
-
-  const logout = async () => {
-    try {
-      if (unsubscribeFirestoreRef.current) {
-        unsubscribeFirestoreRef.current();
-      }
-      await auth.signOut();
-      router.push("/auth");
-    } catch (error) {
-      console.error("Error logging out:", error);
+        
     }
-  };
 
-  if (!mounted) {
-    return null;
-  }
-
-  return (
-    <AuthContext.Provider value={{ user, loading, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+    return <AuthContext.Provider value={{user, loading, logout, isPremium}}>{ children }</AuthContext.Provider>
 }
 
-export const useAuth = () => useContext(AuthContext);
-
+// Custom hook to access the authentication context
+export const useAuth = () => useContext(AuthContext)

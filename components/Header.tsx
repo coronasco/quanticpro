@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import AddTransactionModal from "./AddTransactionModal";
 import Notification from "./Notification";
 import LeftNavigation from "./navigation/LeftNavigation";
+import { PremiumButton } from "./premium-button";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -34,6 +35,7 @@ export default function Header() {
         </div>
 
         <div className="flex items-center gap-4">
+          <PremiumButton />
           <AddTransactionModal />
           <Notification />
         </div>
