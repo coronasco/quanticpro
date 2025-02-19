@@ -29,15 +29,8 @@ interface MenuData {
   userId: string;
 }
 
-type MenuPageProps = {
+interface PageProps {
   params: { slug: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
-};
-
-interface SavedMenu {
-  slug: string;
-  title: string;
-  template: string;
 }
 
 async function getMenuData(slug: string): Promise<MenuData | null> {
@@ -48,7 +41,7 @@ async function getMenuData(slug: string): Promise<MenuData | null> {
     for (const doc of snapshot.docs) {
       const data = doc.data();
       if (data.savedMenus) {
-        const menu = data.savedMenus.find((m: SavedMenu) => m.slug === slug);
+        const menu = data.savedMenus.find((m: { slug: string }) => m.slug === slug);
         if (menu) {
           return {
             title: menu.title,
@@ -67,7 +60,7 @@ async function getMenuData(slug: string): Promise<MenuData | null> {
   }
 }
 
-export default async function MenuPage({ params }: MenuPageProps) {
+export default async function MenuPage({ params }: PageProps) {
   const menuData = await getMenuData(params.slug);
 
   if (!menuData) {
@@ -84,11 +77,11 @@ export default async function MenuPage({ params }: MenuPageProps) {
   return <TemplateComponent title={menuData.title} categories={menuData.categories} />;
 }
 
-export const generateMetadata = async ({ params }: MenuPageProps): Promise<Metadata> => {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const menuData = await getMenuData(params.slug);
   
   return {
     title: menuData ? `${menuData.title} | QuanticPro` : 'Menu | QuanticPro',
     description: 'View our menu and prices',
   };
-}; 
+} 
