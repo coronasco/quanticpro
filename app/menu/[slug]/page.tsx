@@ -5,6 +5,7 @@ import { ClassicTemplate } from "@/components/menu-templates/ClassicTemplate";
 import { ModernTemplate } from "@/components/menu-templates/ModernTemplate";
 import { VintageTemplate } from "@/components/menu-templates/VintageTemplate";
 import { FuturisticTemplate } from "@/components/menu-templates/FuturisticTemplate";
+import type { Metadata } from "next";
 
 interface SavedMenu {
   slug: string;
@@ -62,12 +63,15 @@ async function getMenuData(slug: string): Promise<MenuData | null> {
   }
 }
 
-export default async function page({ 
-  params 
-}: { 
-  params: { slug: string } 
-}) {
-  const menuData = await getMenuData(params.slug);
+// Tipurile pentru Next.js
+type PageProps = {
+  params: { slug: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
+};
+
+// Pagina principală
+export default async function Page(props: PageProps) {
+  const menuData = await getMenuData(props.params.slug);
 
   if (!menuData) {
     notFound();
@@ -83,12 +87,9 @@ export default async function page({
   return <TemplateComponent title={menuData.title} categories={menuData.categories} />;
 }
 
-export async function generateMetadata({ 
-  params 
-}: { 
-  params: { slug: string } 
-}) {
-  const menuData = await getMenuData(params.slug);
+// Metadata
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
+  const menuData = await getMenuData(props.params.slug);
   
   return {
     title: menuData ? `${menuData.title} | QuanticPro` : 'Menu | QuanticPro',
