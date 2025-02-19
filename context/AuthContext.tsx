@@ -6,17 +6,17 @@ import { db } from "@/lib/firebase";
 import { doc, onSnapshot, DocumentSnapshot } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 
-interface AuthContextType {
+export interface AuthContextType {
   user: User | null;
   loading: boolean;
-  logout: () => Promise<void>;
+  signOut: () => Promise<void>;
 }
 
 // 📌 Definim contextul cu valori implicite
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
-  logout: async () => {},
+  signOut: async () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -85,7 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, logout }}>
+    <AuthContext.Provider value={{ user, loading, signOut: logout }}>
       {children}
     </AuthContext.Provider>
   );

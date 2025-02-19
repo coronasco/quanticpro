@@ -5,23 +5,29 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import LeftNavigation from '@/components/navigation/LeftNavigation';
 import Header from '@/components/Header';
 
-const DashboardLayout = ({ 
-  children
- }: Readonly<{
-  children: React.ReactNode;
-}>) => {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   useUserDataListener();
+  
   return (
     <AuthProvider>
       <ProtectedRoute>
-        <div className='flex'>
-          <div className='hidden lg:flex w-80 fixed top-0 left-0 bottom-0'>
-            <LeftNavigation />
-          </div>
-          <div className='m-2 lg:ml-80 w-full lg:pl-1'>
-            <Header />
-            <div className='p-4 lg:p-6 rounded-md bg-slate-50 border mt-4'>
-            {children}
+        <div className="min-h-screen bg-gray-50">
+          <div className="flex gap-3">
+            {/* Left Navigation */}
+            <div className="hidden lg:block w-[310px] fixed top-0 left-0 bottom-0">
+              <LeftNavigation />
+            </div>
+
+            {/* Main Content */}
+            <div className="flex-1 lg:pl-[310px]">
+              <div className="sticky top-0 z-50">
+                <Header />
+              </div>
+              <main className="p-4 lg:p-6">
+                <div className="">
+                  {children}
+                </div>
+              </main>
             </div>
           </div>
         </div>
@@ -29,5 +35,3 @@ const DashboardLayout = ({
     </AuthProvider>
   )
 }
-
-export default DashboardLayout

@@ -17,7 +17,7 @@ export function FuturisticTemplate({ title, categories }: { title: string; categ
   return (
     <div className="min-h-screen bg-[#0A0118] text-white">
       <div 
-        className="fixed inset-0 bg-[radial-gradient(circle_at_50%_-20%,#3B0764,#0A0118)] opacity-50"
+        className="inset-0 bg-[radial-gradient(circle_at_50%_-20%,#3B0764,#0A0118)] opacity-50"
         style={{ maskImage: 'radial-gradient(circle at 50% 0%, black, transparent 70%)' }}
       />
       <div className="relative max-w-4xl mx-auto py-16 px-6">

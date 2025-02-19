@@ -116,29 +116,59 @@ const DEFAULT_CATEGORIES: Category[] = [
   { id: "food", name: "Cucina", icon: "Pizza", items: [] },
 ];
 
-const PreviewTemplate = ({ template, categories }: { template: MenuTemplate, categories: Category[] }) => {
-  const sampleData = {
-    title: "Menu Preview",
-    categories: categories.slice(0, 1).map(cat => ({
-      ...cat,
-      items: cat.items.slice(0, 2)
-    }))
-  };
+const DesignPreview = ({ template, categories }: { template: string, categories: Category[] }) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   const TemplateComponent = {
     classic: ClassicTemplate,
     modern: ModernTemplate,
     vintage: VintageTemplate,
     futuristic: FuturisticTemplate,
-  }[template.id] || ClassicTemplate;
-
-  if (!TemplateComponent) return null;
+  }[template] || ClassicTemplate;
 
   return (
     <div className="absolute inset-0 w-full h-full overflow-hidden">
-      <div className="scale-[0.4] origin-top-left transform-gpu w-[250%] h-[250%]">
-        <TemplateComponent {...sampleData} />
+      <div className={cn(
+        "scale-[0.4] origin-top-left transform-gpu w-[250%] h-[250%]",
+        template === "futuristic" && "scale-[0.35] w-[285%] h-[285%]"
+      )}>
+        <TemplateComponent 
+          title="Menu Preview"
+          categories={categories}
+        />
       </div>
+    </div>
+  );
+};
+
+const PreviewTemplate = ({ template, categories }: { template: string, categories: Category[] }) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
+  const TemplateComponent = {
+    classic: ClassicTemplate,
+    modern: ModernTemplate,
+    vintage: VintageTemplate,
+    futuristic: FuturisticTemplate,
+  }[template] || ClassicTemplate;
+
+  return (
+    <div className="w-full">
+      <TemplateComponent 
+        title="Menu Preview"
+        categories={categories}
+      />
     </div>
   );
 };
@@ -558,7 +588,7 @@ export default function MenuGeneratorPage() {
                   )}
                   onClick={() => setSelectedTemplate(template.id)}
                 >
-                  <PreviewTemplate template={template} categories={categories} />
+                  <DesignPreview template={template.id} categories={categories} />
                   <div className="absolute bottom-0 left-0 right-0 bg-background/80 backdrop-blur-sm p-2">
                     <p className="text-sm font-medium text-center">
                       {template.name}
@@ -666,32 +696,14 @@ export default function MenuGeneratorPage() {
             </DragDropContext>
           </TabsContent>
 
-          <TabsContent value="preview" className="space-y-4">
-            <div className="bg-white rounded-lg border shadow-lg p-8">
-              <h2 className="text-3xl font-bold text-center mb-8">{menuTitle}</h2>
-              {categories.map((category) => (
-                <div key={category.id} className="mb-8 last:mb-0">
-                  <h3 className="text-xl font-semibold mb-4">{category.name}</h3>
-                  <div className="space-y-4">
-                    {category.items.map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex items-center justify-between"
-                      >
-                        <div>
-                          <div className="font-medium">{item.name}</div>
-                          {item.description && (
-                            <div className="text-sm text-muted-foreground">
-                              {item.description}
-                            </div>
-                          )}
-                        </div>
-                        <div className="font-medium">€{item.price.toFixed(2)}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
+          <TabsContent value="preview" className="space-y-4 overflow-hidden">
+            <div className="bg-white rounded-lg border shadow-lg p-8 overflow-hidden">
+              <div className="w-full overflow-hidden">
+                <PreviewTemplate 
+                  template={selectedTemplate}
+                  categories={categories}
+                />
+              </div>
             </div>
           </TabsContent>
         </Tabs>
