@@ -45,11 +45,11 @@ async function getMenuData(slug: string): Promise<MenuData | null> {
     for (const doc of snapshot.docs) {
       const data = doc.data();
       if (data.savedMenus) {
-        const menu = data.savedMenus.find((m: SavedMenu) => m.slug === slug);
+        const menu = data.savedMenus.find((m: any) => m.slug === slug);
         if (menu) {
           return {
             title: menu.title,
-            template: menu.template as Template,
+            template: menu.template,
             categories: data.menuCategories || [],
             userId: doc.id
           };
@@ -70,8 +70,8 @@ type PageProps = {
 };
 
 // Pagina principală
-export default async function Page(props: PageProps) {
-  const menuData = await getMenuData(props.params.slug);
+export default async function Page({ params }: any) {
+  const menuData = await getMenuData(params.slug);
 
   if (!menuData) {
     notFound();
@@ -88,8 +88,8 @@ export default async function Page(props: PageProps) {
 }
 
 // Metadata
-export async function generateMetadata(props: PageProps): Promise<Metadata> {
-  const menuData = await getMenuData(props.params.slug);
+export async function generateMetadata({ params }: any): Promise<Metadata> {
+  const menuData = await getMenuData(params.slug);
   
   return {
     title: menuData ? `${menuData.title} | QuanticPro` : 'Menu | QuanticPro',

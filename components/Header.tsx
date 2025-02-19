@@ -11,9 +11,9 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <header className="h-16 bg-white border-b z-50 lg:pl-[310px]">
+    <header className="h-16 bg-white border-b z-50">
       <div className="h-full px-4 lg:px-6 flex items-center justify-between">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="lg:hidden">
@@ -28,7 +28,7 @@ export default function Header() {
             </SheetContent>
           </Sheet>
 
-          <h1 className="text-xl font-semibold bg-gradient-to-r from-lime-500 to-lime-600 bg-clip-text text-transparent">
+          <h1 className="text-xl font-semibold">
             QuanticPro
           </h1>
         </div>
