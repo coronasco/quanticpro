@@ -5,6 +5,7 @@ import { ClassicTemplate } from "@/components/menu-templates/ClassicTemplate";
 import { ModernTemplate } from "@/components/menu-templates/ModernTemplate";
 import { VintageTemplate } from "@/components/menu-templates/VintageTemplate";
 import { FuturisticTemplate } from "@/components/menu-templates/FuturisticTemplate";
+import { Metadata } from 'next';
 
 interface MenuItem {
   id: string;
@@ -84,8 +85,7 @@ export default async function MenuPage({ params }: MenuPageProps) {
   return <TemplateComponent title={menuData.title} categories={menuData.categories} />;
 }
 
-// Adăugăm metadata pentru SEO
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Menu | QuanticPro',
   description: 'View our menu and prices',
 }; 
