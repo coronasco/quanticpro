@@ -23,7 +23,7 @@ export function ModernTemplate({ title, categories }: { title: string; categorie
         <SearchBar variant="modern" onSearch={setSearchTerm} />
         <div className="grid md:grid-cols-2 gap-8">
           {filteredCategories.map((category) => (
-            <div key={category.id} className="bg-white rounded-2xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+            <div key={category.id} className="bg-white rounded-2xl p-8 shadow-[0_9px_30px_rgb(0,0,0,0.04)]">
               <h2 className="text-xl font-bold mb-6 text-gray-900">{category.name}</h2>
               <div className="space-y-6">
                 {category.items.map((item) => (
