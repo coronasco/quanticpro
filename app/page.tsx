@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Zap, Shield, Smartphone, Coffee } from "lucide-react";
 import { Metadata } from "next";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: 'QuanticPro | Gestione Aziendale Intelligente',
@@ -39,9 +40,11 @@ export default function Home() {
             <div className="flex-1">
               <div className="relative">
                 <div className="absolute -inset-1 bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-lg blur-2xl opacity-30"></div>
-                <img 
+                <Image 
                   src="/dashboard-preview.png" 
                   alt="QuanticPro Dashboard"
+                  width={800}
+                  height={600}
                   className="relative rounded-lg shadow-2xl border border-border/50"
                 />
               </div>
@@ -54,7 +57,7 @@ export default function Home() {
       <section className="py-20 bg-black/5">
         <div className="container px-4 mx-auto">
           <h2 className="text-3xl lg:text-4xl font-bold text-center mb-12">
-            Tutto ciò di cui hai bisogno in un'unica piattaforma
+            Tutto ciò di cui hai bisogno in un&apos;unica piattaforma
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <FeatureCard 
