@@ -30,10 +30,6 @@ type MenuData = {
   userId: string;
 }
 
-type PageProps = {
-  params: { slug: string };
-}
-
 // Funcția pentru a obține datele meniului
 async function getMenuData(slug: string): Promise<MenuData | null> {
   try {
@@ -62,8 +58,13 @@ async function getMenuData(slug: string): Promise<MenuData | null> {
 }
 
 // Componenta principală
-export default async function MenuPage({ params }: PageProps) {
-  const menuData = await getMenuData(params.slug);
+export default async function MenuPage({
+  params
+}: {
+  params: Promise<{ slug: string }>
+}) {
+  const { slug } = await params;
+  const menuData = await getMenuData(slug);
 
   if (!menuData) {
     notFound();
@@ -82,8 +83,13 @@ export default async function MenuPage({ params }: PageProps) {
 }
 
 // Metadata
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const menuData = await getMenuData(params.slug);
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const menuData = await getMenuData(slug);
   
   return {
     title: menuData ? `${menuData.title} | QuanticPro` : 'Menu | QuanticPro',
