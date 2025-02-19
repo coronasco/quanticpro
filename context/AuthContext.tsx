@@ -9,14 +9,14 @@ import { useRouter } from "next/navigation";
 export interface AuthContextType {
   user: User | null;
   loading: boolean;
-  signOut: () => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 // 📌 Definim contextul cu valori implicite
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
-  signOut: async () => {},
+  logout: async () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -85,7 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, signOut: logout }}>
+    <AuthContext.Provider value={{ user, loading, logout }}>
       {children}
     </AuthContext.Provider>
   );
