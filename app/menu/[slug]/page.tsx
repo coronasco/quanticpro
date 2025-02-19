@@ -29,10 +29,6 @@ interface MenuData {
   userId: string;
 }
 
-interface PageProps {
-  params: { slug: string };
-}
-
 async function getMenuData(slug: string): Promise<MenuData | null> {
   try {
     const usersRef = collection(db, "users");
@@ -60,7 +56,11 @@ async function getMenuData(slug: string): Promise<MenuData | null> {
   }
 }
 
-export default async function MenuPage({ params }: PageProps) {
+export default async function MenuPage({
+  params,
+}: {
+  params: { slug: string }
+}) {
   const menuData = await getMenuData(params.slug);
 
   if (!menuData) {
@@ -77,7 +77,11 @@ export default async function MenuPage({ params }: PageProps) {
   return <TemplateComponent title={menuData.title} categories={menuData.categories} />;
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({ 
+  params 
+}: { 
+  params: { slug: string } 
+}): Promise<Metadata> {
   const menuData = await getMenuData(params.slug);
   
   return {
