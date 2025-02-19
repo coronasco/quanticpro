@@ -806,11 +806,42 @@ export default function MenuGeneratorPage() {
               <SheetTitle>QR Code Menu</SheetTitle>
             </SheetHeader>
             <div className="flex flex-col items-center justify-center space-y-4 pt-8">
-              <div className="cursor-pointer" data-qr={currentMenuId}>
-                <QRCodeSVG 
-                  value={`${window.location.origin}/menu/${currentMenuId}`}
-                  size={200}
-                />
+              <div className="relative group">
+                <div className="cursor-pointer" data-qr={currentMenuId}>
+                  <QRCodeSVG 
+                    value={`${window.location.origin}/menu/${currentMenuId}`}
+                    size={200}
+                  />
+                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="custom"
+                      size="icon"
+                      className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onMouseEnter={(e) => {
+                        const button = e.currentTarget;
+                        button.click();
+                      }}
+                    >
+                      <Share className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem onClick={() => shareViaEmail(`${window.location.origin}/menu/${currentMenuId}`, menuTitle)}>
+                      <Mail className="mr-2 h-4 w-4" />
+                      Condividi via Email
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => shareViaWhatsApp(`${window.location.origin}/menu/${currentMenuId}`)}>
+                      <Phone className="mr-2 h-4 w-4" />
+                      Condividi su WhatsApp
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => saveQRCode(currentMenuId || "")}>
+                      <Download className="mr-2 h-4 w-4" />
+                      Salva QR Code
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
               <p className="text-sm text-muted-foreground text-center">
                 Scansiona questo codice QR per visualizzare il menu
@@ -838,12 +869,14 @@ export default function MenuGeneratorPage() {
 
       <div className="max-w-5xl mx-auto bg-slate-100 p-4 rounded-lg">
         <h2 className="text-xl font-semibold mb-6">Il tuo Menu</h2>
-        <div className="">
+        {savedMenus.length === 0 && (
+          <div className="text-center text-muted-foreground">
+            Non hai creato nessun menu
+          </div>
+        )}
+        <div className="grid gap-4">
           {savedMenus.map((menu) => (
-            <div
-              key={menu.id}
-              className="bg-card rounded-lg border p-6 space-y-4"
-            >
+            <div key={menu.id} className="bg-card rounded-lg border p-6 space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-medium">{menu.title}</h3>
                 <span className="text-sm text-muted-foreground">
@@ -918,6 +951,44 @@ export default function MenuGeneratorPage() {
                       onClick={() => window.open(`/menu/${menu.slug}`, '_blank')}
                     >
                       Visualizza Menu
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={async () => {
+                        if (!user) return;
+                        try {
+                          const docRef = doc(db, "users", user.uid);
+                          const docSnap = await getDoc(docRef);
+                          
+                          if (docSnap.exists()) {
+                            const data = docSnap.data();
+                            const updatedMenus = data.savedMenus.filter(
+                              (m: SavedMenu) => m.slug !== menu.slug
+                            );
+                            
+                            await updateDoc(docRef, {
+                              savedMenus: updatedMenus
+                            });
+
+                            toast({
+                              title: "Menu eliminato",
+                              description: "Il menu è stato eliminato con successo",
+                            });
+
+                            setSavedMenus(updatedMenus);
+                          }
+                        } catch (error) {
+                          console.error("Error deleting menu:", error);
+                          toast({
+                            title: "Errore",
+                            description: "Errore durante l'eliminazione del menu",
+                            variant: "destructive",
+                          });
+                        }
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>

@@ -7,12 +7,6 @@ import { VintageTemplate } from "@/components/menu-templates/VintageTemplate";
 import { FuturisticTemplate } from "@/components/menu-templates/FuturisticTemplate";
 import type { Metadata } from "next";
 
-interface SavedMenu {
-  slug: string;
-  title: string;
-  template: string;
-}
-
 interface MenuItem {
   id: string;
   name: string;
@@ -37,6 +31,12 @@ interface MenuData {
   userId: string;
 }
 
+interface SavedMenuItem {
+  slug: string;
+  title: string;
+  template: Template;
+}
+
 async function getMenuData(slug: string): Promise<MenuData | null> {
   try {
     const usersRef = collection(db, "users");
@@ -45,7 +45,7 @@ async function getMenuData(slug: string): Promise<MenuData | null> {
     for (const doc of snapshot.docs) {
       const data = doc.data();
       if (data.savedMenus) {
-        const menu = data.savedMenus.find((m: any) => m.slug === slug);
+        const menu = data.savedMenus.find((m: SavedMenuItem) => m.slug === slug);
         if (menu) {
           return {
             title: menu.title,
@@ -63,14 +63,11 @@ async function getMenuData(slug: string): Promise<MenuData | null> {
   }
 }
 
-// Tipurile pentru Next.js
-type PageProps = {
+interface PageParams {
   params: { slug: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
-};
+}
 
-// Pagina principală
-export default async function Page({ params }: any) {
+export default async function Page({ params }: PageParams) {
   const menuData = await getMenuData(params.slug);
 
   if (!menuData) {
@@ -87,8 +84,7 @@ export default async function Page({ params }: any) {
   return <TemplateComponent title={menuData.title} categories={menuData.categories} />;
 }
 
-// Metadata
-export async function generateMetadata({ params }: any): Promise<Metadata> {
+export async function generateMetadata({ params }: PageParams): Promise<Metadata> {
   const menuData = await getMenuData(params.slug);
   
   return {
